@@ -1,8 +1,10 @@
 /* Styles for Mobile devices */
 .container {
+  display: flex;
+  justify-content: center;
   min-width: 320px;
   max-width: 375px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 0 16px;
 }
 /* Styles for Tablet devices */
