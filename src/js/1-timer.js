@@ -1,7 +1,5 @@
 import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
 
 const datePicker = document.getElementById('datetime-picker');
 const startButton = document.querySelector('button[data-start]');
@@ -14,6 +12,15 @@ const timerFields = {
 
 let userSelectedDate = null;
 let countdownInterval = null;
+
+function toggleStartButtonState(isEnabled) {
+  startButton.disabled = !isEnabled;
+  startButton.style.opacity = isEnabled ? '1' : '0.6';
+  startButton.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
+}
+
+// Изначально кнопка неактивна
+toggleStartButtonState(false);
 
 const options = {
   enableTime: true,
@@ -28,25 +35,16 @@ const options = {
         title: 'Error',
         message: 'Please choose a date in the future',
       });
-      startButton.disabled = true;
+      toggleStartButtonState(false);
       return;
     }
 
     userSelectedDate = selectedDate;
-    startButton.disabled = false;
+    toggleStartButtonState(true);
   },
 };
 
 flatpickr(datePicker, options);
-
-function updateTimer(ms) {
-  const { days, hours, minutes, seconds } = convertMs(ms);
-
-  timerFields.days.textContent = addLeadingZero(days);
-  timerFields.hours.textContent = addLeadingZero(hours);
-  timerFields.minutes.textContent = addLeadingZero(minutes);
-  timerFields.seconds.textContent = addLeadingZero(seconds);
-}
 
 function startCountdown() {
   const updateCountdown = () => {
@@ -56,7 +54,7 @@ function startCountdown() {
     if (remainingTime <= 0) {
       clearInterval(countdownInterval);
       iziToast.success({ title: 'Completed', message: 'Countdown finished!' });
-      startButton.disabled = true;
+      toggleStartButtonState(false);
       datePicker.disabled = false;
       updateTimer(0);
       return;
@@ -67,11 +65,20 @@ function startCountdown() {
 
   countdownInterval = setInterval(updateCountdown, 1000);
   updateCountdown();
-  startButton.disabled = true;
+  toggleStartButtonState(false);
   datePicker.disabled = true;
 }
 
 startButton.addEventListener('click', startCountdown);
+
+function updateTimer(ms) {
+  const { days, hours, minutes, seconds } = convertMs(ms);
+
+  timerFields.days.textContent = addLeadingZero(days);
+  timerFields.hours.textContent = addLeadingZero(hours);
+  timerFields.minutes.textContent = addLeadingZero(minutes);
+  timerFields.seconds.textContent = addLeadingZero(seconds);
+}
 
 function convertMs(ms) {
   const second = 1000;
