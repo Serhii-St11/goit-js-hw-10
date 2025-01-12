@@ -19,7 +19,6 @@ function toggleStartButtonState(isEnabled) {
   startButton.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
 }
 
-// Изначально кнопка неактивна
 toggleStartButtonState(false);
 
 const options = {
